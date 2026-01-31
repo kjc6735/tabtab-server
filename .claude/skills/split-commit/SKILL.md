@@ -29,9 +29,16 @@ allowed-tools: Bash(git:*)
 
 ## 커밋 메시지 규칙
 
-- 형식: `<type>: <description>`
+- 형식:
+  ```
+  <type>: <description>
+
+  - <파일경로>: <변경 내용 설명>
+  - <파일경로>: <변경 내용 설명>
+  ```
 - type: feat, fix, refactor, docs, style, test, chore
 - description: 한글로 간결하게 작성
+- body: 각 파일별 변경 내용을 구체적으로 작성
 
 ## 출력 형식
 
@@ -68,3 +75,5 @@ allowed-tools: Bash(git:*)
 - 각 커밋 전 사용자 확인을 받을 것
 - .env, credentials 등 민감한 파일은 커밋하지 않을 것
 - 커밋 순서는 의존성을 고려하여 결정 (설정 -> 기능 -> 테스트)
+- 커밋 계획은 각 파일의 함수/클래스/설정 등 구체적인 변경 내용을 포함할 것
+- 커밋 메시지에는 변경 내용만 간결하게 작성하고, 불필요한 메타 정보는 추가하지 않을 것
