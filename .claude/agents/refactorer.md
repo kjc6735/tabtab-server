@@ -16,12 +16,13 @@ model: opus
 - 아키텍처: Controller - Service - Repository 패턴
 
 ### 레이어별 타입 네이밍 규칙
-| 레이어 | 네이밍 패턴 | 예시 |
-|--------|-------------|------|
-| Controller | `~~~RequestDto` | `CreateUserRequestDto`, `LoginRequestDto` |
-| Controller | `~~~ResponseDto` | `UserResponseDto` |
-| Service | `~~~Input`, `~~~Dto` | `CreateUserInput`, `UpdateUserDto` |
-| Repository | Service 타입 공유 또는 자체 정의 | `CreateUserData` |
+
+| 레이어     | 네이밍 패턴                      | 예시                                      |
+| ---------- | -------------------------------- | ----------------------------------------- |
+| Controller | `~~~RequestDto`                  | `CreateUserRequestDto`, `LoginRequestDto` |
+| Controller | `~~~ResponseDto`                 | `UserResponseDto`                         |
+| Service    | `~~~Input`, `~~~Dto`             | `CreateUserInput`, `UpdateUserDto`        |
+| Repository | Service 타입 공유 또는 자체 정의 | `CreateUserData`                          |
 
 **주의**: Service/Repository에서 Controller의 `~~~RequestDto`를 import하지 않음
 
@@ -30,29 +31,43 @@ model: opus
 ### SOLID 원칙
 
 #### S - 단일 책임 원칙
+
 ```typescript
 // 나쁜 예 - 여러 책임
 class UserService {
-  async createUser(input: { email: string; password: string; name: string }) { /* 유저 생성 */ }
-  async sendWelcomeEmail(user: User) { /* 이메일 발송 */ }
-  async generateReport() { /* 리포트 생성 */ }
+  async createUser(input: { email: string; password: string; name: string }) {
+    /* 유저 생성 */
+  }
+  async sendWelcomeEmail(user: User) {
+    /* 이메일 발송 */
+  }
+  async generateReport() {
+    /* 리포트 생성 */
+  }
 }
 
 // 좋은 예 - 분리된 책임
 class UserService {
-  async createUser(input: { email: string; password: string; name: string }) { /* 유저 생성 */ }
+  async createUser(input: { email: string; password: string; name: string }) {
+    /* 유저 생성 */
+  }
 }
 
 class EmailService {
-  async sendWelcomeEmail(user: User) { /* 이메일 발송 */ }
+  async sendWelcomeEmail(user: User) {
+    /* 이메일 발송 */
+  }
 }
 
 class ReportService {
-  async generateUserReport() { /* 리포트 생성 */ }
+  async generateUserReport() {
+    /* 리포트 생성 */
+  }
 }
 ```
 
 #### O - 개방-폐쇄 원칙
+
 ```typescript
 // 나쁜 예 - 수정에 열려있음
 class NotificationService {
@@ -73,11 +88,15 @@ interface NotificationSender {
 }
 
 class EmailSender implements NotificationSender {
-  async send(message: string) { /* 이메일 발송 */ }
+  async send(message: string) {
+    /* 이메일 발송 */
+  }
 }
 
 class SmsSender implements NotificationSender {
-  async send(message: string) { /* SMS 발송 */ }
+  async send(message: string) {
+    /* SMS 발송 */
+  }
 }
 
 class NotificationService {
@@ -90,6 +109,7 @@ class NotificationService {
 ```
 
 #### D - 의존성 역전 원칙
+
 ```typescript
 // 나쁜 예 - 구체 클래스에 의존
 class UserService {
@@ -233,9 +253,15 @@ async processOrder(order: Order) {
 
 ```typescript
 // 나쁜 예 - 매직 넘버
-if (user.role === 1) { /* admin */ }
-if (retryCount > 3) { /* max retry */ }
-if (status === 'active') { /* ... */ }
+if (user.role === 1) {
+  /* admin */
+}
+if (retryCount > 3) {
+  /* max retry */
+}
+if (status === 'active') {
+  /* ... */
+}
 
 // 좋은 예 - 상수/Enum 사용
 enum UserRole {
@@ -251,9 +277,15 @@ enum OrderStatus {
 
 const MAX_RETRY_COUNT = 3;
 
-if (user.role === UserRole.ADMIN) { /* ... */ }
-if (retryCount > MAX_RETRY_COUNT) { /* ... */ }
-if (status === OrderStatus.ACTIVE) { /* ... */ }
+if (user.role === UserRole.ADMIN) {
+  /* ... */
+}
+if (retryCount > MAX_RETRY_COUNT) {
+  /* ... */
+}
+if (status === OrderStatus.ACTIVE) {
+  /* ... */
+}
 ```
 
 ### 5. 긴 메서드 분리
@@ -295,6 +327,7 @@ private async logPayment(order: Order, payment: Payment): Promise<void> { /* ...
 ### 파일: src/user/user.service.ts
 
 #### 이슈 1: 중복 코드
+
 **현재 코드** (라인 25-35):
 \`\`\`typescript
 // 문제가 있는 코드
@@ -310,6 +343,7 @@ private async logPayment(order: Order, payment: Payment): Promise<void> { /* ...
 ---
 
 #### 이슈 2: Fat Controller
+
 **현재 코드** (라인 50-80):
 ...
 ```
@@ -336,6 +370,7 @@ private async logPayment(order: Order, payment: Payment): Promise<void> { /* ...
 - **Controller**: ResponseDto.from() 팩토리 메서드로 변환해서 반환
 
 ### Controller에서 ResponseDto 팩토리 메서드 사용
+
 ```typescript
 // ❌ 나쁜 예 - Controller가 Service 결과 그대로 반환
 @Get(':id')
